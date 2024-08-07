@@ -1,3 +1,7 @@
+# Jupyter notebook secrets
+/etc/ipython
+/etc/jupyter
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

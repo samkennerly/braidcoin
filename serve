@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+
+# Run this script from the repo root folder to:
+# - Build a Docker container with Python 3.
+# - Install Python packages from requirements.txt.
+# - Launch a Jupyter notebook server on port 8888 in a container.
+# - Bind-mount folders to be accessed from inside the container.
+# - Delete the container when it stops.
+
+REPO=${PWD}
+PROJECT='braidcoin'
+
+docker build --tag "${PROJECT}:latest" "${REPO}" &&
+#docker run --rm "${PROJECT}:latest" pip freeze > requirements.txt &&
+docker run --rm --user "${PROJECT}" \
+  --publish "127.0.0.1:8888:8888" \
+  --volume "${REPO}/etc/ipython:/home/${PROJECT}/.ipython" \
+  --volume "${REPO}/etc/jupyter:/home/${PROJECT}/.jupyter" \
+  --volume "${REPO}/books:/home/${PROJECT}/books" \
+  --volume "${REPO}/code:/home/${PROJECT}/code" \
+  --volume "${REPO}/output:/home/${PROJECT}/output" \
+  --hostname "${PROJECT}" \
+  "${PROJECT}:latest" \
+  jupyter notebook --no-browser --ip=0.0.0.0 --port=8888
