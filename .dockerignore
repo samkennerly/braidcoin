@@ -1,0 +1,3 @@
+# Avoid copying files into Docker images unless we need them
+*
+!requirements.txt
