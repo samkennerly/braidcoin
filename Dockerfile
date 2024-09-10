@@ -12,9 +12,11 @@ RUN pip install --break-system-packages --upgrade pip && \
     pip install --break-system-packages --requirement requirements.txt
 
 # Create user and run as that user
-RUN useradd --create-home braidcoin
+RUN useradd --uid 1001 braidcoin
 USER braidcoin
 WORKDIR /home/braidcoin
+
+RUN mkdir .ipython .jupyter books code output
 
 # Ensure Python can find modules in this repo
 ENV PYTHONPATH=/home/braidcoin/code

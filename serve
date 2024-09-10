@@ -8,17 +8,17 @@
 # - Delete the container when it stops.
 
 REPO=${PWD}
-PROJECT='braidcoin'
 
-docker build --tag "${PROJECT}:latest" "${REPO}" &&
-#docker run --rm "${PROJECT}:latest" pip freeze > requirements.txt &&
-docker run --rm --user "${PROJECT}" \
+docker build --tag "braidcoin:latest" "${REPO}" &&
+#docker run --rm "braidcoin:latest" pip freeze > requirements.txt &&
+docker run --rm \
+  --user 1001 \
   --publish "127.0.0.1:8888:8888" \
-  --volume "${REPO}/etc/ipython:/home/${PROJECT}/.ipython" \
-  --volume "${REPO}/etc/jupyter:/home/${PROJECT}/.jupyter" \
-  --volume "${REPO}/books:/home/${PROJECT}/books" \
-  --volume "${REPO}/code:/home/${PROJECT}/code" \
-  --volume "${REPO}/output:/home/${PROJECT}/output" \
-  --hostname "${PROJECT}" \
-  "${PROJECT}:latest" \
+  --volume "${REPO}/etc/ipython:/home/braidcoin/.ipython" \
+  --volume "${REPO}/etc/jupyter:/home/braidcoin/.jupyter" \
+  --volume "${REPO}/books:/home/braidcoin/books" \
+  --volume "${REPO}/code:/home/braidcoin/code" \
+  --volume "${REPO}/output:/home/braidcoin/output" \
+  --hostname "braidcoin" \
+  "braidcoin:latest" \
   jupyter notebook --no-browser --ip=0.0.0.0 --port=8888

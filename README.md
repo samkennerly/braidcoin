@@ -45,7 +45,11 @@ fix bind mount problem:
 - choose USER in Dockerfile, ./serve, or both?
 - run Jupyter as root?
 
-pip freeze to pin requirements?
+LaTeX errors: \lambda -> \\lambda, \prime -> \\prime
+
+Dockerfile: requirements.txt is copied to wrong folder
+
+serve: pip freeze to pin requirements?
 
 README Docker cleanup, e.g. `docker rmi braidcoin`
 
