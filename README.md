@@ -38,6 +38,17 @@ You can also [view the example notebook in HTML].
 
 ## TODO
 
+fix bind mount problem:
+
+- Docker for Mac ignores bind mount permissions?
+- create blank etc/ipython and etc/jupyter folders?
+- choose USER in Dockerfile, ./serve, or both?
+- run Jupyter as root?
+
+pip freeze to pin requirements?
+
+README Docker cleanup, e.g. `docker rmi braidcoin`
+
 books/Braid Examples:
 
 - %pylab is deprecated, use %matplotlib inline
