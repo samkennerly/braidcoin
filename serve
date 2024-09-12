@@ -10,7 +10,7 @@
 REPO=${PWD}
 
 docker build --tag "braidcoin:latest" "${REPO}" &&
-#docker run --rm "braidcoin:latest" pip freeze > requirements.txt &&
+docker run --rm "braidcoin:latest" pip freeze > requirements.txt &&
 docker run --rm \
   --user 1001 \
   --hostname "braidcoin" \
