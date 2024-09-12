@@ -5,7 +5,7 @@ Experiments in a improving Bitcoin using a Directed Acyclic Graph
 
 ## run with Docker
 
-If you have [Docker desktop] installed, `cd` to this repo and run
+If you have [Docker Desktop] installed, `cd` to this repo and run
 ```
 ./serve
 ```
@@ -13,9 +13,15 @@ then point a web browser here:
 ```
 127.0.0.1:8888
 ```
-Docker will [bind mount] folders from this repo and create an `etc/` folder for Jupyter config files. The container will not have permission to modify files outside this repo.
+The `serve` script creates a Docker image named `braidcoin:latest`, runs a container from that image, and starts a [Jupyter] server. Docker will [bind mount] folders from this repo and create `.ipython` and `.jupyter` folders if they do not exist. From inside the container, mounted folders appear in `/home/braidcoin/`.
 
-[Docker desktop]: https://www.docker.com/products/docker-desktop/
+Use Ctrl-C to stop the server. The container will delete itself. To delete the image, run
+```
+docker rmi braidcoin
+```
+
+[Docker Desktop]: https://www.docker.com/products/docker-desktop/
+[Jupyter]: http://jupyter.org/
 [bind mount]: https://docs.docker.com/engine/storage/bind-mounts/
 
 
@@ -31,17 +37,11 @@ sudo apt-get install ipython3-notebook python3-graph-tool python3-joblib python3
 
 You can also [view the example notebook in HTML].
 
-[Jupyter]: http://jupyter.org/
 [graph_tool]: https://graph-tool.skewed.de/
 [view the example notebook in HTML]: https://rawgit.com/mcelrath/braidcoin/master/Braid%2BExamples.html
 
 
 ## TODO
-
-README:
-
-- Docker cleanup, e.g. `docker rmi braidcoin`
-- Docker image runs bash; serve script launches Jupyter
 
 books/Braid Examples:
 
@@ -49,11 +49,7 @@ books/Braid Examples:
 - %pylab is deprecated, use %matplotlib inline
 - Does python-bitcoinlib need `sudo apt-get install libssl-dev` ?
 
-bind mount weirdness:
-
-- Docker for Mac ignores bind mount permissions?
-- choose USER in Dockerfile, ./serve, or both?
-- run Jupyter as root?
+figure out bind mount weirdness with Docker Engine for Linux
 
 Use scipy.sparse instead of graph-tool? NetworkX for drawing?
 
