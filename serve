@@ -13,12 +13,12 @@ docker build --tag "braidcoin:latest" "${REPO}" &&
 #docker run --rm "braidcoin:latest" pip freeze > requirements.txt &&
 docker run --rm \
   --user 1001 \
+  --hostname "braidcoin" \
   --publish "127.0.0.1:8888:8888" \
-  --volume "${REPO}/etc/ipython:/home/braidcoin/.ipython" \
-  --volume "${REPO}/etc/jupyter:/home/braidcoin/.jupyter" \
+  --volume "${REPO}/.ipython:/home/braidcoin/.ipython" \
+  --volume "${REPO}/.jupyter:/home/braidcoin/.jupyter" \
   --volume "${REPO}/books:/home/braidcoin/books" \
   --volume "${REPO}/code:/home/braidcoin/code" \
   --volume "${REPO}/output:/home/braidcoin/output" \
-  --hostname "braidcoin" \
   "braidcoin:latest" \
   jupyter notebook --no-browser --ip=0.0.0.0 --port=8888

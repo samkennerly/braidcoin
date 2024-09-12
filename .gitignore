@@ -1,6 +1,6 @@
 # Jupyter notebook secrets
-/etc/ipython
-/etc/jupyter
+.ipython
+.jupyter
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
