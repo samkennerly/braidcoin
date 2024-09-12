@@ -38,27 +38,22 @@ You can also [view the example notebook in HTML].
 
 ## TODO
 
-fix bind mount problem:
+README:
 
-- Docker for Mac ignores bind mount permissions?
-- create blank etc/ipython and etc/jupyter folders?
-- choose USER in Dockerfile, ./serve, or both?
-- run Jupyter as root?
-
-LaTeX errors: \lambda -> \\lambda, \prime -> \\prime
-
-Dockerfile: requirements.txt is copied to wrong folder
-
-serve: pip freeze to pin requirements?
-
-README Docker cleanup, e.g. `docker rmi braidcoin`
+- Docker cleanup, e.g. `docker rmi braidcoin`
+- Docker image runs bash; serve script launches Jupyter
 
 books/Braid Examples:
 
+- LaTeX errors: \lambda -> \\lambda, \prime -> \\prime
 - %pylab is deprecated, use %matplotlib inline
 - Does python-bitcoinlib need `sudo apt-get install libssl-dev` ?
 
-Update Dockerfile EXPOSE and CMD?
+bind mount weirdness:
+
+- Docker for Mac ignores bind mount permissions?
+- choose USER in Dockerfile, ./serve, or both?
+- run Jupyter as root?
 
 Use scipy.sparse instead of graph-tool? NetworkX for drawing?
 
