@@ -43,14 +43,8 @@ You can also [view the example notebook in HTML].
 
 ## TODO
 
-books/Braid Examples:
-
-- LaTeX errors: \lambda -> \\lambda, \prime -> \\prime
-- %pylab is deprecated, use %matplotlib inline
-- Does python-bitcoinlib need `sudo apt-get install libssl-dev` ?
-
-figure out bind mount weirdness with Docker Engine for Linux
-
 Use scipy.sparse instead of graph-tool? NetworkX for drawing?
 
 Compare to DAG NIGHT: https://eprint.iacr.org/2022/1494.pdf
+
+figure out bind mount weirdness with Docker Engine for Linux
