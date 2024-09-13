@@ -7,7 +7,7 @@ from collections.abc import Sequence
 
 class Minernet(Sequence):
 
-    def __iter__(self, n):
+    def __init__(self, n):
         nodes = [x for x in range(n)]
         peers = {k:{} for k in nodes}
 
@@ -22,4 +22,7 @@ class Minernet(Sequence):
 
     def __getitem__(self, i):
         return self.nodes[i]
+
+    def __repr__(self):
+        return f"<Minernet with {len(self)} nodes>"
 
