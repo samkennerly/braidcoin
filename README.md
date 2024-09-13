@@ -43,14 +43,19 @@ You can also [view the example notebook in HTML].
 
 ## TODO
 
+minernet.py:
+
+  - be careful generating peers
+  - small-world network instead of sphere?
+  - do we need a Node type, or just indices?
+  - use fake PoW with numpy.random?
+
 simplify plots:
 
  - Use NetworkX instead of graph-tool for graph layout?
  - simplify color handling?
 
 Can scipy.sparse speed anything up?
-
-Small-world (instead of uniform sphere) distribution of random nodes?
 
 OCD/YCA afor large cohorts: find 1/2/4/8... parents and do binary search?
 
