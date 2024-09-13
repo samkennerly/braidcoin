@@ -43,11 +43,21 @@ You can also [view the example notebook in HTML].
 
 ## TODO
 
-Use NetworkX for drawing?
+simplify plots:
 
-Use scipy.sparse instead of graph-tool?
+ - Use NetworkX instead of graph-tool for graph layout?
+ - simplify color handling?
+
+Can scipy.sparse speed anything up?
+
+Small-world (instead of uniform sphere) distribution of random nodes?
 
 OCD/YCA afor large cohorts: find 1/2/4/8... parents and do binary search?
+
+FIXME class Node: remove txids from mempool?
+
+FIXME class Network: all blocks have same tx or none.
+Use random subset to simulate mempool propagation?
 
 Compare to DAG NIGHT: https://eprint.iacr.org/2022/1494.pdf
 
