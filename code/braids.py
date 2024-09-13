@@ -1,13 +1,10 @@
-#!/usr/bin/env python3
-
-# Sample code for doing computations with braids
-#
-# The code here emphasizes clarity over speed.  We have used the memoize()
-# function to memoize functions that are called repeatedly with the same
-# arguments.  Use of memoize is an indication that better algorithms exist.
+"""
+Sample code for doing computations with braids
+The code here emphasizes clarity over speed.
+"""
 
 import hashlib
-import bitcoin  # uses python-bitcoinlib https://github.com/petertodd/python-bitcoinlib
+import bitcoin  # https://github.com/petertodd/python-bitcoinlib
 from bitcoin.core import uint256_from_str as uint256
 import graph_tool.all as gt
 import graph_tool.draw as gtdraw
@@ -18,9 +15,7 @@ from math import sqrt, pi, sin, cos, acos
 
 NETWORK_SIZE = 1.0  # The round-trip time in seconds to traverse the network
 TICKSIZE = 0.1  # One "tick" of the network in which beads will be propagated and mined
-MAX_HASH = (
-    2**256 - 1
-)  # Maximum value a 256 bit unsigned hash can have, used to calculate targets
+MAX_HASH = 2**256 - 1  # Maximum 256 bit unsigned hash value (to calculate targets)
 
 bead_color = (27 / 255, 158 / 255, 119 / 255, 1)  # Greenish
 genesis_color = (217 / 255, 95 / 255, 2 / 255, 1)  # Orangeish
@@ -39,13 +34,11 @@ ancestor_color = highlight3_color
 # A rotating color palette to color cohorts
 color_palette = [genesis_color, cohort_color, sibling_color, tip_color]
 
-# gencache = {}
-# gencache[True] = {}
-# gencache[False] = {}
 cohort_size_benchmark = []  # cohort size vs time
 
 
 def sha256(x: int):
+    """bytestring: Convert x to string, encode as a bytestring, and hash it."""
     return hashlib.sha256(("%d" % x).encode()).digest()
 
 
@@ -56,6 +49,7 @@ def printvset(vs):
 
 def sph_arclen(n1, n2):
     """Compute the arc length on the surface of a unit sphere."""
+
     # phi = 90 - latitude
     phi1 = (90.0 - n1.latitude) * pi / 180.0
     phi2 = (90.0 - n2.latitude) * pi / 180.0
@@ -69,7 +63,8 @@ def sph_arclen(n1, n2):
 
 
 class Network:
-    """Abstraction for an entire network containing <n> nodes.  The network has
+    """
+    Abstraction for an entire network containing <n> nodes.  The network has
     a internal clock for simulation which uses <ticksize>.  Latencies are taken
     from a uniform distribution on [0,1) so <ticksize> should be < 1.
     """
@@ -85,12 +80,8 @@ class Network:
         self.nnodes = nnodes
         self.genesis = uint256(sha256(0))
         self.beads = {}  # a hash map of all beads in existence
-        # self.inflightdelay = {} # list of in-flight beads
-        # self.mempool = set() # A list of transactions for everyone to mine.  Everyone
-        # sees the same mempool, p2p propegation delays are not modelled
         self.beads[self.genesis] = Bead(self.genesis, set(), set(), self, -1)
-        # FIXME not modelling mempool propagation means that we will either have all blocks in a round have
-        # the same tx, or none.  Maybe each round mining should grab a random subset?
+
         self.nodes = [
             Node(self.genesis, self, nodeid, target=target) for nodeid in range(nnodes)
         ]
@@ -102,7 +93,6 @@ class Network:
                 for me in range(nnodes)
             ],
         ):
-            # print("Node ", node, " has peers ", peers)
             if topology == "sphere":
                 latencies = [10 * sph_arclen(node, self.nodes[i]) for i in peers]
             node.setpeers([self.nodes[i] for i in peers], latencies)
@@ -112,13 +102,9 @@ class Network:
         """Execute one tick."""
         self.t += self.ticksize
 
-        # Create a new set of transaction IDs in the mempool
-        # self.mempool.update([uint256(sha256(randint(2**63-1))) for dummy in range(randint(1,2))])
-
         # Have each node attempt to mine a random subset of the global mempool
         for node in self.nodes:
             # numpy.random.choice doesn't work with sets :-(
-            # node.tick(choice(list(self.mempool), randint(len(self.mempool)), replace=False), mine)
             node.tick(mine=mine)
 
         for node, bead in copy(self.inflightdelay):
@@ -199,7 +185,8 @@ class Node:
 
     def tick(self, newtxs=[], mine=True):
         """Add a Bead satisfying <target>."""
-        # First try to extend all braids by received beads that have not been added to a braid
+        # First try to extend all braids by received beads
+        # that have not been added to a braid
         newincoming = set()
         oldtips = self.braids[0].tips
         while len(newincoming) != len(self.incoming):
@@ -209,7 +196,6 @@ class Node:
                         newincoming.add(bead)
             self.incoming = newincoming
         if mine:
-            # PoW = uint256(sha256(self.nodesalt+self.nonce))
             PoW = uint256(
                 sha256(np.random.randint(1 << 64 - 1) * np.random.randint(1 << 64 - 1))
             )
@@ -223,7 +209,7 @@ class Node:
                     self.nodeid,
                 )
                 self.receive(b)  # Send it to myself (will rebroadcast to peers)
-                # TODO remove txids from mempool
+
         else:
             self.hremaining -= 1
             if self.hremaining <= 0:
@@ -248,7 +234,7 @@ class Node:
 
     def receive(self, bead):
         """Recieve announcement of a new bead."""
-        # TODO Remove txids from mempool
+
         if bead in self.beads:
             return
         else:
@@ -265,7 +251,8 @@ class Node:
 
 
 class Bead:
-    """A bead is either a block of transactions, or an individual transaction.
+    """
+    A bead is either a block of transactions, or an individual transaction.
     This class stores auxiliary information about a bead and is separate
     from the vertex being stored by the Braid class.  Beads are stored by
     the Braid object in the same order as vertices.  So if you know the
@@ -297,8 +284,10 @@ class Bead:
 
 
 class Braid(gt.Graph):
-    """A Braid is a Directed Acyclic Graph with no incest (parents may not also
-    be non-parent ancestors).  A braid may have multiple tips."""
+    """
+    A Braid is a Directed Acyclic Graph with no incest (parents may not also
+    be non-parent ancestors).  A braid may have multiple tips.
+    """
 
     def __init__(self, beads=[]):
         super().__init__(directed=True, vorder=True)
@@ -353,8 +342,8 @@ class Braid(gt.Graph):
         return True
 
     def rewards(self, coinbase):
-        """Compute the rewards for each bead, where each cohort is awarded
-        <conbase> coins.
+        """
+        Compute rewards for each bead, where each cohort is awarded <coinbase> coins.
         FIXME splitting of tx fees not implemented.
         """
         for cohort in self.cohorts():
@@ -385,7 +374,8 @@ class Braid(gt.Graph):
     # FIXME I can make 3-way siblings too: find the common ancestor of any 3 siblings
     # and ask what its rank is...
     def siblings(self):
-        """The siblings of a bead are other beads for which it cannot be
+        """
+        The siblings of a bead are other beads for which it cannot be
         decided whether the come before or after this bead in time.
         Note that it does not make sense to call siblings() on a cohort
         which contains dangling chain tips.  The result is a dict of
@@ -423,14 +413,15 @@ class Braid(gt.Graph):
         return retval
 
     def cohorts(self, initial_cohort=None, older=False, cache=False):
-        """Given the seed of the next cohort (which is the set of beads one step older, in the next
-        cohort), build an ancestor and descendant set for each visited bead.  A new cohort is
-        formed if we encounter a set of beads, stepping in the descendant direction, for which
-        *all* beads in this cohort are ancestors of the first generation of beads in the next
-        cohort.
+        """
+        Given the seed of the next cohort (which is the set of beads one step
+        older, in the next cohort), build an ancestor and descendant set for each
+        visited bead.  A new cohort is formed if we encounter a set of beads,
+        stepping in the descendant direction, for which *all* beads in this cohort are
+        ancestors of the first generation of beads in the nextcohort.
 
-        This function will not return the tips nor any beads connected to them, that do not yet
-        form a cohort.
+        This function will not return the tips nor any beads connected to them, that
+        do not yet form a cohort.
         """
         cohort = head = nexthead = initial_cohort or frozenset([self.vertex(0)])
         parents = ancestors = {
@@ -523,8 +514,10 @@ class Braid(gt.Graph):
                         break
 
     def cohort_time(self):
-        """Compute the average cohort time and its standard deviation returned
-        as a tuple (mean, stddev)."""
+        """
+        Compute the average cohort time and its standard deviation returned
+        as a tuple (mean, stddev).
+        """
         t = 0
         ctimes = []
         for c in self.cohorts():
@@ -536,8 +529,10 @@ class Braid(gt.Graph):
         return (np.mean(ctimes), np.std(ctimes))
 
     def exclude(self, vs, predicate):
-        """Recursively exclude beads which satisfy a predicate (usually either
-        parents or children) -- this removes all ancestors or descendants."""
+        """
+        Recursively exclude beads which satisfy a predicate (usually either
+        parents or children) -- this removes all ancestors or descendants.
+        """
         lastvs = copy(vs)
         while True:
             newvs = {v for v in vs if predicate(v) not in vs}
@@ -546,11 +541,13 @@ class Braid(gt.Graph):
             lastvs = newvs
 
     def common_generation(self, vs, older=True):
-        """Find the first common ancestor/descendant generation of all vs, and
+        """
+        Find the first common ancestor/descendant generation of all vs, and
         all intermediate ancestors/descendants by bfs.  This is analagous to the
         Most Recent Common Ancestor (MRCA) in biology.  The first return value
         should be the seed for the *next* cohort while the second return value
-        is the *current* cohort."""
+        is the *current* cohort.
+        """
         if older:
             (edgef, nodef, nextgen_f) = ("out_edges", "target", self.parents)
         else:
@@ -585,7 +582,10 @@ class Braid(gt.Graph):
         return self.common_generation(vs, older=True)
 
     def all_generations(self, v: gt.Vertex, older, cohort=None, limit=None):
-        """Return all vertices in <cohort> older or younger depending on the value of <older>."""
+        """
+        Return all vertices in <cohort> older or younger depending on the value of
+        <older>.
+        """
         result = gen = self.next_generation(frozenset([v]), older)
         while gen:
             gen = self.next_generation(gen, older)
@@ -601,7 +601,9 @@ class Braid(gt.Graph):
         return self.all_generations(v, older=False, cohort=cohort, limit=limit)
 
     def next_generation(self, vs, older):
-        """Returns the set of vertices one generation from <vs> in the <older> direction."""
+        """
+        Returns the set of vertices one generation from <vs> in the <older> direction.
+        """
         if older:
             (edgef, nodef) = ("out_edges", "target")
         else:
@@ -633,9 +635,9 @@ class Braid(gt.Graph):
         layout=None,
         **kwargs
     ):
-        """Plot this braid, possibly coloring graph cuts.  <focusbead>
-        indicates which bead to consider for coloring its siblings and
-        cohort."""
+        """
+        Plot this braid, possibly coloring graph cuts. <focusbead> indicates which bead to consider for coloring its siblings and cohort.
+        """
         vlabel = self.new_vertex_property("string")
         pos = self.new_vertex_property("vector<double>")
         if layout:
@@ -721,18 +723,21 @@ class Braid(gt.Graph):
         return gtdraw.graph_draw(self, **kwargs)
 
     def braid_layout(self, **kwargs):
-        """Create a position vertex property for a braid.  We use the actual bead time for the x
+        """
+        Create a position vertex property for a braid.  We use the actual bead time for the x
         coordinate, and a spring model for determining y.
 
         FIXME how do we minimize crossing edges?
         """
-        # FIXME what I really want here is symmetry about a horizontal line, and a spring-block layout that
-        # enforces the symmetry.
+
+        # FIXME what I really want here is symmetry about a horizontal line, and
+        # a spring-block layout that enforces the symmetry.
         # 1. randomly assign vertices to "above" or "below" the midline.
         # 2. Compute how many edges cross the midline (
         # 3. Compute SFDP holding everything fixed except those above, in a single cohort.
         # 4. Repeat for the half of the cohort below the midline
         # 5. Iterate this a couple times...
+
         groups = self.new_vertex_property("int")
         pos = self.new_vertex_property("vector<double>")
         pin = self.new_vertex_property("bool")
