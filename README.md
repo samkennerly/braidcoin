@@ -43,8 +43,14 @@ You can also [view the example notebook in HTML].
 
 ## TODO
 
-Use scipy.sparse instead of graph-tool? NetworkX for drawing?
+Use NetworkX for drawing?
+
+Use scipy.sparse instead of graph-tool?
+
+OCD/YCA afor large cohorts: find 1/2/4/8... parents and do binary search?
 
 Compare to DAG NIGHT: https://eprint.iacr.org/2022/1494.pdf
+
+See also: PHANTOM, GHOSTDAG
 
 figure out bind mount weirdness with Docker Engine for Linux
