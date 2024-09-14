@@ -45,18 +45,14 @@ You can also [view the example notebook in HTML].
 
 minernet.py:
 
-  - use fake PoW with numpy.random?
-    - see Node.tick, Node.hremaining
   - do we need class Miner, or are indices enough?
-  - need latencies (not distance) between peers
+    - see Node.tick, Node.hremaining
+    - use fake PoW with numpy.random?
+  - realistic latencies:
     - do we need latencies between non-peers?
-  - networkx random small-world network?
-  - use scipy.sparse ?
-
-simplify plots:
-
- - Use NetworkX instead of graph-tool for graph layout?
- - simplify color handling?
+    - networkx random small-world network?
+  - use scipy.sparse for graph maths?
+  - Use NetworkX instead of graph-tool for graph layout?
 
 OCD/YCA afor large cohorts: find 1/2/4/8... parents and do binary search?
 
