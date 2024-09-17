@@ -1,6 +1,7 @@
 """
 Tools for simulating a network of bitcoin miners.
 """
+
 from collections import namedtuple
 from dataclasses import dataclass
 
@@ -10,6 +11,7 @@ from pandas import DataFrame
 
 # initialize numpy random number generator
 rng = random.default_rng()
+
 
 def random_links(n_nodes, n_peers, mean=1, sigma=0.1):
     """generator[Tuple(int, int)]: (node, peer) pairs."""
@@ -35,7 +37,7 @@ class Minernet:
         links = DataFrame(links, columns="node peer lag".split())
 
         bead0 = Bead()
-        beads = [{bead0} for _ in links['node'].unique()]
+        beads = [{bead0} for _ in links["node"].unique()]
 
         self.beads = beads
         self.links = links
@@ -55,5 +57,3 @@ class Minernet:
 
     def __repr__(self):
         return f"<GraphFrame with {len(self)} links>"
-
-
