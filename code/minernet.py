@@ -1,8 +1,8 @@
 """
 Tools for simulating a network of bitcoin miners.
 """
-
-from collections.abc import Iterable
+from collections import namedtuple
+from dataclasses import dataclass
 
 from numpy import random
 from pandas import DataFrame
@@ -11,32 +11,40 @@ from pandas import DataFrame
 # initialize numpy random number generator
 rng = random.default_rng()
 
-
-def random_links(n_nodes, n_peers, mu, sigma):
-    nodes = list(range(n_nodes))
-
-    for node in nodes:
-        peers = [x for x in nodes if x != node]
+def random_links(n_nodes, n_peers, mean=1, sigma=0.1):
+    """generator[Tuple(int, int)]: (node, peer) pairs."""
+    for node in range(n_nodes):
+        peers = [x for x in range(n_nodes) if x != node]
         peers = rng.choice(peers, size=n_peers, replace=False)
         peers = map(int, peers)
         for peer in peers:
-            yield node, peer, rng.lognormal(mu, sigma)
+            yield node, peer, rng.lognormal(mean=mean, sigma=sigma)
 
 
-class Minernet(Iterable):
+@dataclass(frozen=True)
+class Bead:
+    creator: int = 0
+    parents: frozenset = frozenset()
+    tick: int = 0
 
-    def __init__(self, n_nodes, n_peers=4, mu=1, sigma=0.5):
-        cols = "node peer latency".split()
-        links = random_links(n_nodes, n_peers, mu, sigma)
-        links = DataFrame(links, columns=cols)
 
+class Minernet:
+
+    def __init__(self, **kwargs):
+        links = random_links(**kwargs)
+        links = DataFrame(links, columns="node peer lag".split())
+
+        bead0 = Bead()
+        beads = [{bead0} for _ in links['node'].unique()]
+
+        self.beads = beads
         self.links = links
         self.pool = set()
         self.tick = 0
 
     @property
     def nodes(self):
-        """numpy.array: Distinct, sorted nodes."""
+        """list: Distinct, sorted node ids."""
         return sorted(int(x) for x in self.links["node"].unique())
 
     def __len__(self):
@@ -46,4 +54,6 @@ class Minernet(Iterable):
         return self.links.itertuples(index=False, name="Link")
 
     def __repr__(self):
-        return f"<Minernet with {len(self)} links and {len(self.nodes)} nodes>"
+        return f"<GraphFrame with {len(self)} links>"
+
+
