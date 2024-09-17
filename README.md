@@ -45,14 +45,14 @@ You can also [view the example notebook in HTML].
 
 minernet.py:
 
+  - finish bead propagation
+  - check old code for geometric distro
   - do we need class Miner, or are indices enough?
     - see Node.tick, Node.hremaining
-    - use fake PoW with numpy.random?
-  - realistic latencies:
-    - do we need latencies between non-peers?
-    - networkx random small-world network?
+  - networkx random small-world network?
   - use scipy.sparse for graph maths?
   - Use NetworkX instead of graph-tool for graph layout?
+  - what is the current hash target? where to look it up?
 
 OCD/YCA afor large cohorts: find 1/2/4/8... parents and do binary search?
 
