@@ -3,7 +3,8 @@ Tools for simulating a network of bitcoin miners.
 """
 
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from itertools import count
 
 from numpy import random
 from pandas import DataFrame
@@ -25,9 +26,10 @@ def random_links(n_nodes, n_peers, mean=1, sigma=0.1):
 
 @dataclass(frozen=True)
 class Bead:
-    creator: int = 0
     parents: frozenset = frozenset()
+    creator: int = 0
     tick: int = 0
+    uid: int = field(default_factory=count().__next__)
 
 
 class Minernet:
@@ -37,7 +39,7 @@ class Minernet:
         links = DataFrame(links, columns="node peer lag".split())
 
         bead0 = Bead()
-        beads = [{bead0} for _ in links["node"].unique()]
+        beads = [[bead0] for _ in links["node"].unique()]
 
         self.beads = beads
         self.links = links
@@ -48,6 +50,11 @@ class Minernet:
     def nodes(self):
         """list: Distinct, sorted node ids."""
         return sorted(int(x) for x in self.links["node"].unique())
+
+    @property
+    def genesis(self):
+        """Bead: First bead created when network was initialized."""
+        return self.beads[0][0]
 
     def __len__(self):
         return len(self.links)
