@@ -2,20 +2,15 @@
 Tools for simulating a network of bitcoin miners.
 """
 
-from collections import namedtuple
-from dataclasses import dataclass, field
-from itertools import count
+from dataclasses import dataclass
 
+from networkx import bfs_layout, draw_networkx, DiGraph
 from numpy import random
+from matplotlib.pyplot import figure
 from pandas import DataFrame
-
 
 # initialize numpy random number generator
 rng = random.default_rng()
-
-
-def braid(beads):
-    raise NotImplementedError
 
 
 def random_links(n_nodes, n_peers):
@@ -27,12 +22,53 @@ def random_links(n_nodes, n_peers):
             yield node, peer
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class Bead:
     name: int = 0
-    tick: int = 0
-    parents: frozenset = frozenset()
     creator: int = 0
+    parents: frozenset = frozenset()
+    tick: int = 0
+
+
+class Braid:
+
+    def __init__(self, beads):
+        beads = set(beads) or set(Bead())
+        beads = sorted(beads, key=lambda x: x.name)
+
+        self.beads = beads
+
+    def __repr__(self):
+        return f"<Braid with {len(self.beads)} beads>"
+
+    @property
+    def root(self):
+        return self.beads[0]
+
+    def cohorts(self):
+        raise NotImplementedError
+
+    def links(self):
+        return ((y, x.name) for x in self.beads for y in x.parents)
+
+    def plot(self, figsize=(9, 3)):
+        to_networkx = self.to_networkx
+        root = self.root
+
+        graph = to_networkx()
+        pos = bfs_layout(graph, start=root.name)
+        fig = figure(figsize=figsize)
+        draw_networkx(graph, pos=pos)
+
+        return fig
+
+    def to_networkx(self):
+        links = self.links
+
+        graph = DiGraph()
+        graph.add_edges_from(links())
+
+        return graph
 
 
 class Minernet:
