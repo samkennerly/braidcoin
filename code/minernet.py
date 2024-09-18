@@ -29,7 +29,7 @@ def random_links(n_nodes, n_peers):
 
 @dataclass(frozen=True, slots=True)
 class Bead:
-    uid: int = field(default_factory=count().__next__)
+    name: int = 0
     tick: int = 0
     parents: frozenset = frozenset()
     creator: int = 0
