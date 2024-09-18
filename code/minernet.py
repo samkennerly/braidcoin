@@ -14,29 +14,33 @@ from pandas import DataFrame
 rng = random.default_rng()
 
 
-def random_links(n_nodes, n_peers, mean=1, sigma=0.1):
-    """generator[Tuple(int, int)]: (node, peer) pairs."""
+def braid(beads):
+    raise NotImplementedError
+
+
+def random_links(n_nodes, n_peers):
     for node in range(n_nodes):
         peers = [x for x in range(n_nodes) if x != node]
         peers = rng.choice(peers, size=n_peers, replace=False)
         peers = map(int, peers)
         for peer in peers:
-            yield node, peer, rng.lognormal(mean=mean, sigma=sigma)
+            yield node, peer
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Bead:
+    uid: int = field(default_factory=count().__next__)
+    tick: int = 0
     parents: frozenset = frozenset()
     creator: int = 0
-    tick: int = 0
-    uid: int = field(default_factory=count().__next__)
 
 
 class Minernet:
 
-    def __init__(self, **kwargs):
+    def __init__(self, mu=1, sigma=0.5):
         links = random_links(**kwargs)
-        links = DataFrame(links, columns="node peer lag".split())
+        links = DataFrame(links, columns="node peer".split())
+        links["lag"] = rng.lognormal(mean=mu, sigma=sigma, size=len(links))
 
         bead0 = Bead()
         beads = [[bead0] for _ in links["node"].unique()]
