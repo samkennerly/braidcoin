@@ -22,21 +22,20 @@ def random_links(n_nodes, n_peers):
             yield node, peer
 
 
-@dataclass(frozen=True)
+@dataclass
 class Bead:
-    name: int = 0
-    creator: int = 0
-    parents: frozenset = frozenset()
-    tick: int = 0
+
+    def __init__(self, index=0, creator=0, parents=(), tick=0):
+        self.index = int(index)
+        self.creator = int(creator)
+        self.parents = frozenset(parents)
+        self.tick = int(tick)
 
 
 class Braid:
 
     def __init__(self, beads):
-        beads = set(beads) or set(Bead())
-        beads = sorted(beads, key=lambda x: x.name)
-
-        self.beads = beads
+        self.beads = sorted(beads, key=lambda x: x.index) or [Bead()]
 
     def __repr__(self):
         return f"<Braid with {len(self.beads)} beads>"
@@ -45,18 +44,24 @@ class Braid:
     def root(self):
         return self.beads[0]
 
+    def ancestors(self, index):
+        raise NotImplementedError
+
     def cohorts(self):
         raise NotImplementedError
 
     def links(self):
-        return ((y, x.name) for x in self.beads for y in x.parents)
+        return ((y, x.index) for x in self.beads for y in x.parents)
+
+    def tips(self):
+        raise NotImplementedError
 
     def plot(self, figsize=(9, 3)):
         to_networkx = self.to_networkx
         root = self.root
 
         graph = to_networkx()
-        pos = bfs_layout(graph, start=root.name)
+        pos = bfs_layout(graph, start=root.index)
         fig = figure(figsize=figsize)
         draw_networkx(graph, pos=pos)
 
