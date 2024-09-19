@@ -45,8 +45,11 @@ You can also [view the example notebook in HTML].
 
 minernet.py:
 
-  - find cohorts. color by cohort?
-  - do we need to detect incest?
+  - generate uplinks() and downlinks() ?
+  - find cohorts
+    - find 1/2/4/8... parents and do binary search?
+    - do we need to detect incest?
+  - color by cohort
   - check old code for geometric distro
   - do we need class Miner, or are indices enough?
     - see Node.tick, Node.hremaining
@@ -54,8 +57,6 @@ minernet.py:
   - networkx random small-world network?
   - use scipy.sparse for graph maths?
   - what is the current hash target? where to look it up?
-
-OCD/YCA afor large cohorts: find 1/2/4/8... parents and do binary search?
 
 FIXME class Node: remove txids from mempool?
 
